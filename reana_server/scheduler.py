@@ -31,6 +31,7 @@ from reana_server.api_client import (
 from reana_server.config import (
     REANA_SCHEDULER_SECONDS_TO_WAIT_FOR_REANA_READY,
     REANA_SCHEDULER_RETRY_DELAY,
+    GET_NODE_STATUS,
 )
 from reana_server.status import NodesStatus
 
@@ -95,9 +96,10 @@ def doesnt_exceed_max_reana_workflow_count():
 def reana_ready(workflow_min_job_memory):
     """Check if REANA can start new workflows."""
     for check_condition in [
-        check_predefined_conditions,
+        lambda: not GET_NODE_STATUS or check_predefined_conditions(),
         doesnt_exceed_max_reana_workflow_count,
-        partial(check_memory_availability, workflow_min_job_memory),
+        lambda: not GET_NODE_STATUS
+        or partial(check_memory_availability, workflow_min_job_memory),
     ]:
         if not check_condition():
             return False

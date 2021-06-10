@@ -46,6 +46,7 @@ REANA_COMPLEXITY_JOBS_MEMORY_LIMIT = os.getenv(
 )
 """Maximum default memory limit for user job containers for workflow complexity estimation."""
 
+GET_NODE_STATUS = os.getenv("GET_NODE_STATUS", "True").lower() == "true"
 
 # Invenio configuration
 # =====================

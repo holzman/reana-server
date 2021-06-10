@@ -945,8 +945,13 @@ def start_workflow(workflow_id_or_name, user):  # noqa
         if "yadage" in (workflow.type_, restart_type):
             _load_yadage_spec(workflow, operational_options)
         complexity = _calculate_complexity(workflow)
-        total_cluster_memory = NodesStatus().get_total_memory()
+        if app.config["GET_NODE_STATUS"]:
+            total_cluster_memory = NodesStatus().get_total_memory()
+        else:
+            total_cluster_memory = float(1024) * 1000 ** 3  # 1024 GB
+
         workflow_priority = workflow.get_priority(total_cluster_memory)
+
         workflow_min_job_memory = get_workflow_min_job_memory(complexity)
         current_workflow_submission_publisher.publish_workflow_submission(
             user_id=str(user.id_),
